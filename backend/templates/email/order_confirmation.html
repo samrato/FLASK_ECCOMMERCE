@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Confirmation #{{ order.order_number }}</title>
+</head>
+<body>
+    <h2>Thank you for your order!</h2>
+    <p>Your order #{{ order.order_number }} has been received and is being processed.</p>
+    
+    <h3>Order Summary</h3>
+    <table>
+        <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+        {% for item in order.items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ "%.2f"|format(item.price) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <p><strong>Total: ${{ "%.2f"|format(order.total) }}</strong></p>
+    
+    <h3>Shipping Information</h3>
+    <p>
+        {{ order.shipping_address.first_name }} {{ order.shipping_address.last_name }}<br>
+        {{ order.shipping_address.address1 }}<br>
+        {% if order.shipping_address.address2 %}
+        {{ order.shipping_address.address2 }}<br>
+        {% endif %}
+        {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.zip_code }}<br>
+        {{ order.shipping_address.country }}
+    </p>
+    
+    <p>If you have any questions, please contact our support team.</p>
+</body>
+</html>
