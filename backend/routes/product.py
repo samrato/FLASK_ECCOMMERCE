@@ -4,14 +4,14 @@ from backend import db
 from backend.models.product import Product, ProductImage, ProductVariant
 from backend.models.product import ProductSchema, ProductImageSchema, ProductVariantSchema
 from backend.utils.decorators import admin_required, seller_required, validate_schema
-api = Blueprint('product', __name__)
+from backend .routes import product_bp
 
 product_schema = ProductSchema()
 products_schema = ProductSchema(many=True)
 product_image_schema = ProductImageSchema()
 product_variant_schema = ProductVariantSchema()
 
-@api.route('/products', methods=['GET'])
+@product_bp.route('/products', methods=['GET'])
 def get_products():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
@@ -24,12 +24,12 @@ def get_products():
         'current_page': products.page
     }), 200
 
-@api.route('/products/<int:id>', methods=['GET'])
+@product_bp.route('/products/<int:id>', methods=['GET'])
 def get_product(id):
     product = Product.query.get_or_404(id)
     return product_schema.jsonify(product), 200
 
-@api.route('/products', methods=['POST'])
+@product_bp.route('/products', methods=['POST'])
 @jwt_required()
 @seller_required
 @validate_schema(product_schema)
@@ -53,7 +53,7 @@ def create_product():
     
     return product_schema.jsonify(product), 201
 
-@api.route('/products/<int:id>', methods=['PUT'])
+@product_bp.route('/products/<int:id>', methods=['PUT'])
 @jwt_required()
 @seller_required
 @validate_schema(product_schema)
@@ -76,7 +76,7 @@ def update_product(id):
     db.session.commit()
     return product_schema.jsonify(product), 200
 
-@api.route('/products/<int:id>', methods=['DELETE'])
+@product_bp.route('/products/<int:id>', methods=['DELETE'])
 @jwt_required()
 @seller_required
 def delete_product(id):
@@ -90,7 +90,7 @@ def delete_product(id):
     db.session.commit()
     return jsonify({'message': 'Product deactivated'}), 200
 
-@api.route('/products/<int:id>/images', methods=['POST'])
+@product_bp.route('/products/<int:id>/images', methods=['POST'])
 @jwt_required()
 @seller_required
 def add_product_image(id):
@@ -116,7 +116,7 @@ def add_product_image(id):
     db.session.commit()
     return product_image_schema.jsonify(image), 201
 
-@api.route('/products/search', methods=['GET'])
+@product_bp.route('/products/search', methods=['GET'])
 def search_products():
     query = request.args.get('q', '')
     category_id = request.args.get('category_id', type=int)

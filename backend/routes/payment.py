@@ -3,9 +3,9 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from backend import db
 from backend.models.order import Order
 from backend.services.payment import PaymentService
-api = Blueprint('payment', __name__)
+from backend .routes import payment_bp
 
-@api.route('/orders/<int:id>/payment', methods=['POST'])
+@payment_bp.route('/orders/<int:id>/payment', methods=['POST'])
 @jwt_required()
 def create_payment(id):
     current_user = get_jwt_identity()
@@ -20,7 +20,7 @@ def create_payment(id):
     
     return jsonify(payment_data), 200
 
-@api.route('/payment/webhook', methods=['POST'])
+@payment_bp.route('/payment/webhook', methods=['POST'])
 def payment_webhook():
     payload = request.data
     sig_header = request.headers.get('Stripe-Signature')

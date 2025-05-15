@@ -6,23 +6,23 @@ from backend.models.order import order_schema, orders_schema, order_item_schema
 from backend.models.cart import Cart, CartItem
 from backend.models.product import Product, ProductVariant
 from backend.services.payment import PaymentService
-api = Blueprint('order', __name__)
+from backend.routes import order_bp
 
-@api.route('/orders', methods=['GET'])
+@order_bp.route('/orders', methods=['GET'])
 @jwt_required()
 def get_orders():
     current_user = get_jwt_identity()
     orders = Order.query.filter_by(user_id=current_user).order_by(Order.created_at.desc()).all()
     return orders_schema.jsonify(orders), 200
 
-@api.route('/orders/<int:id>', methods=['GET'])
+@order_bp.route('/orders/<int:id>', methods=['GET'])
 @jwt_required()
 def get_order(id):
     current_user = get_jwt_identity()
     order = Order.query.filter_by(id=id, user_id=current_user).first_or_404()
     return order_schema.jsonify(order), 200
 
-@api.route('/orders', methods=['POST'])
+@order_bp.route('/orders', methods=['POST'])
 @jwt_required()
 def create_order():
     current_user = get_jwt_identity()
@@ -113,7 +113,7 @@ def create_order():
     
     return order_schema.jsonify(order), 201
 
-@api.route('/orders/<int:id>/cancel', methods=['POST'])
+@order_bp.route('/orders/<int:id>/cancel', methods=['POST'])
 @jwt_required()
 def cancel_order(id):
     current_user = get_jwt_identity()

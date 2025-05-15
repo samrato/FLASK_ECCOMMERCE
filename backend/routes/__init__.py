@@ -2,7 +2,7 @@ from flask import Blueprint
 
 # Create all blueprints here to avoid circular imports
 auth_bp = Blueprint('auth', __name__)
-user_bp = Blueprint('user', __name__)
+# user_bp = Blueprint('user', __name__)
 product_bp = Blueprint('product', __name__)
 order_bp = Blueprint('order', __name__)
 cart_bp = Blueprint('cart', __name__)

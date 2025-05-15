@@ -4,7 +4,7 @@ from backend import db
 from backend.models.cart import Cart, CartItem, cart_schema, cart_item_schema, cart_items_schema
 from backend.models.product import Product, ProductVariant
 from backend.utils.decorators import validate_schema
-from.import cart_bp
+from backend.routes import cart_bp
 
 @cart_bp.route('/cart', methods=['GET'])
 @jwt_required()
