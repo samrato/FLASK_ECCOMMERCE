@@ -1,9 +1,9 @@
-from flask import request, jsonify
+from flask import request, jsonify,Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.order import Order
 from app.services.payment import PaymentService
-from . import api
+api = Blueprint('payment', __name__)
 
 @api.route('/orders/<int:id>/payment', methods=['POST'])
 @jwt_required()

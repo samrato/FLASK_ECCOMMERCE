@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify,Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.order import Order, OrderItem, OrderStatus
@@ -6,7 +6,7 @@ from app.models.order import order_schema, orders_schema, order_item_schema
 from app.models.cart import Cart, CartItem
 from app.models.product import Product, ProductVariant
 from app.services.payment import PaymentService
-from . import api
+api = Blueprint('order', __name__)
 
 @api.route('/orders', methods=['GET'])
 @jwt_required()

@@ -6,7 +6,7 @@ from datetime import datetime
 class User(db.Model):
     __tablename__ = 'users'
     
-    userId = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
@@ -32,8 +32,8 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
     
     def generate_auth_tokens(self):
-        access_token = create_access_token(identity=self.userId)
-        refresh_token = create_refresh_token(identity=self.userId)
+        access_token = create_access_token(identity=self.id)
+        refresh_token = create_refresh_token(identity=self.id)
         return access_token, refresh_token
     
     def __repr__(self):

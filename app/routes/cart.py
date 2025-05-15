@@ -1,10 +1,10 @@
-from flask import request, jsonify
+from flask import request, jsonify,Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.cart import Cart, CartItem, cart_schema, cart_item_schema, cart_items_schema
 from app.models.product import Product, ProductVariant
 from app.utils.decorators import validate_schema
-from . import api
+api = Blueprint('cart', __name__)
 
 @api.route('/cart', methods=['GET'])
 @jwt_required()

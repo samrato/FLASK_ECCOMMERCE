@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify,Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.user import User, UserSchema
@@ -6,7 +6,7 @@ from app.models.product import Product, ProductSchema
 from app.models.order import Order, OrderSchema, OrderStatus
 from app.models.review import Review, ReviewSchema
 from app.utils.decorators import admin_required
-from . import api
+api = Blueprint('admin', __name__)
 
 users_schema = UserSchema(many=True)
 products_schema = ProductSchema(many=True)

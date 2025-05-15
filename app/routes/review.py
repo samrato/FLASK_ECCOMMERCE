@@ -1,10 +1,10 @@
-from flask import request, jsonify
+from flask import request, jsonify,Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.review import Review, review_schema, reviews_schema
 from app.models.product import Product
 from app.models.order import Order, OrderItem
-from . import api
+api = Blueprint('reviews', __name__)
 
 @api.route('/products/<int:product_id>/reviews', methods=['GET'])
 def get_product_reviews(product_id):

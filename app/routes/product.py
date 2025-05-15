@@ -1,10 +1,10 @@
-from flask import request, jsonify
+from flask import request, jsonify,Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.product import Product, ProductImage, ProductVariant
 from app.models.product import ProductSchema, ProductImageSchema, ProductVariantSchema
 from app.utils.decorators import admin_required, seller_required, validate_schema
-from . import api
+api = Blueprint('product', __name__)
 
 product_schema = ProductSchema()
 products_schema = ProductSchema(many=True)

@@ -10,7 +10,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     discount_price = db.Column(db.Float)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
-    seller_id = db.Column(db.Integer, db.ForeignKey('users.userId'))
+    seller_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     stock = db.Column(db.Integer, default=0)
     sku = db.Column(db.String(100), unique=True)
     is_active = db.Column(db.Boolean, default=True)
