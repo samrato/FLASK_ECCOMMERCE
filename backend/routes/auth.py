@@ -78,6 +78,9 @@ def forgot_password():
 def reset_password():
     token = request.json.get('token')
     password = request.json.get('password')
+    is_valid, error = validate_password(password)
+    if not is_valid:
+        return jsonify({'message': error}), 400
     
     user = AuthService.verify_reset_token(token)
     if not user:
