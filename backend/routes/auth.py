@@ -4,6 +4,7 @@ from backend import db
 from backend.models.user import User, UserSchema
 from backend.services.auth import AuthService
 from backend.utils.decorators import validate_schema
+from backend.utils.validators import validate_email,validate_password
 from backend.routes import auth_bp
 
 user_schema = UserSchema()
@@ -13,6 +14,13 @@ users_schema = UserSchema(many=True)
 @validate_schema(user_schema)
 def register():
     data = request.get_json()
+    #requestinng data 
+    password = request.json.get('password')
+    is_valid_password, error = validate_password(data['password'])
+    if not is_valid_password:
+        return jsonify({'message': error}), 400
+    if not validate_email(data['email']):
+        return jsonify({'message': 'Invalid email format'}), 400
     if User.query.filter_by(email=data['email']).first():
         return jsonify({'message': 'Email already exists'}), 400
     if User.query.filter_by(username=data['username']).first():
