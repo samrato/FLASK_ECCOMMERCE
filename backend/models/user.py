@@ -1,11 +1,13 @@
-from backend.extensions import db,ma
+from backend.extensions import db, ma
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token
 from datetime import datetime
 from backend.models.product import Product
-from backend.models .review import Review
+from backend.models.review import Review
 from backend.models.order import Order
 from backend.models.cart import CartItem
+from marshmallow import fields
+
 class User(db.Model):
     __tablename__ = 'users'
     
@@ -21,7 +23,7 @@ class User(db.Model):
     is_seller = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relationships
     products = db.relationship(Product, backref='seller', lazy=True)
     orders = db.relationship(Order, backref='customer', lazy=True)
@@ -42,8 +44,12 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
+
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
         exclude = ('password_hash',)
+
+    # Add password field explicitly for input (load only)
+    password = fields.String(required=True, load_only=True)
