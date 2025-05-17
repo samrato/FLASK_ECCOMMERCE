@@ -37,9 +37,9 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
     
     def generate_auth_tokens(self):
-       
-        access_token = create_access_token(identity=self.id)
-        refresh_token = create_refresh_token(identity=self.id)
+       #in accssing or making the token make sure its converte to string then on access u convert it back to interger to avoid error of crypo padding
+        access_token = create_access_token(identity=str(self.id))
+        refresh_token = create_refresh_token(identity=str(self.id))
         return access_token, refresh_token
     
     def __repr__(self):

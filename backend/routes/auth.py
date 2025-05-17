@@ -43,7 +43,6 @@ def register():
 def login():
     data = request.get_json()
     user = User.query.filter_by(email=data.get('email')).first()
-    
     if not user or not user.check_password(data.get('password')):
         return jsonify({'message': 'Invalid email or password'}), 401
     
@@ -57,7 +56,7 @@ def login():
 @auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
-    current_user = get_jwt_identity()
+    current_user = int(get_jwt_identity())
     new_token = create_access_token(identity=current_user)
     return jsonify({'access_token': new_token}), 200
 
