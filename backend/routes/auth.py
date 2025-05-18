@@ -58,10 +58,12 @@ def login():
 @auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
-    current_user = int(get_jwt_identity())
-    new_token = create_access_token(identity=current_user)
-    return jsonify({'access_token': new_token}), 200
-
+    try:
+        current_user = int(get_jwt_identity())
+        new_token = create_access_token(identity=current_user)
+        return jsonify({'access_token': new_token}), 200
+    except Exception as e:
+        return jsonify ({"message":"Inteernal server error","details":str(e)})
 @auth_bp.route('/forgot-password', methods=['POST'])
 def forgot_password():
     email = request.json.get('email')
