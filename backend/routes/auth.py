@@ -66,17 +66,19 @@ def refresh():
         return jsonify ({"message":"Inteernal server error","details":str(e)})
 @auth_bp.route('/forgot-password', methods=['POST'])
 def forgot_password():
-    email = request.json.get('email')
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        return jsonify({'message': 'Email not found'}), 404
+    try:
+        email = request.json.get('email')
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({'message': 'Email not found'}), 404
     
     # Generate reset token and send email
-    reset_token = AuthService.generate_reset_token(user)
-    AuthService.send_reset_email(user.email, reset_token)
+        reset_token = AuthService.generate_reset_token(user)
+        AuthService.send_reset_email(user.email, reset_token)
     
-    return jsonify({'message': 'Password reset email sent'}), 200
-
+        return jsonify({'message': 'Password reset email sent'}), 200
+    except Exception as e:
+        return jsonify({"message":"Internal server error","details":str(e)})
 @auth_bp.route('/reset-password', methods=['POST'])
 def reset_password():
     token = request.json.get('token')
