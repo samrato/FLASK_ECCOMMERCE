@@ -1,19 +1,19 @@
-from backend.extensions import db,ma
+from backend.extensions import db, ma
 from datetime import datetime
 
 class Cart(db.Model):
     __tablename__ = 'carts'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     items = db.relationship('CartItem', backref='cart', lazy=True)
 
 class CartItem(db.Model):
     __tablename__ = 'cart_items'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     cart_id = db.Column(db.Integer, db.ForeignKey('carts.id'))
@@ -22,20 +22,26 @@ class CartItem(db.Model):
     variant_id = db.Column(db.Integer, db.ForeignKey('product_variants.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     product = db.relationship('Product', backref='cart_items')
     variant = db.relationship('ProductVariant')
+
+# ✅ SCHEMAS
+class CartItemSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = CartItem
+        load_instance = True
+        include_fk = True
+
+    user_id = ma.auto_field(dump_only=True)
+    cart_id = ma.auto_field(dump_only=True)
 
 class CartSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Cart
         load_instance = True
 
-class CartItemSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = CartItem
-        load_instance = True
-        include_fk = True
+    items = ma.Nested(CartItemSchema, many=True, dump_only=True)
 
 cart_schema = CartSchema()
 cart_item_schema = CartItemSchema()

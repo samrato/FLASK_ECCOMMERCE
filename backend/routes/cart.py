@@ -9,7 +9,7 @@ from backend.routes import cart_bp
 @cart_bp.route('/cart', methods=['GET'])
 @jwt_required()
 def get_cart():
-    current_user = get_jwt_identity()
+    current_user =int( get_jwt_identity())
     cart = Cart.query.filter_by(user_id=current_user).first()
     
     if not cart:
@@ -18,25 +18,25 @@ def get_cart():
         db.session.commit()
     
     return cart_schema.jsonify(cart), 200
-
 @cart_bp.route('/cart/items', methods=['POST'])
 @jwt_required()
 @validate_schema(cart_item_schema)
 def add_to_cart():
     current_user = get_jwt_identity()
     data = request.get_json()
-    
-    # Get or create cart
+
+    # Get or create cart for user
     cart = Cart.query.filter_by(user_id=current_user).first()
     if not cart:
         cart = Cart(user_id=current_user)
         db.session.add(cart)
-    
+        db.session.commit()
+
     # Check if product exists
     product = Product.query.get(data['product_id'])
     if not product or not product.is_active:
         return jsonify({'message': 'Product not available'}), 404
-    
+
     # Check variant if provided
     variant = None
     if data.get('variant_id'):
@@ -46,34 +46,29 @@ def add_to_cart():
         ).first()
         if not variant:
             return jsonify({'message': 'Invalid product variant'}), 400
-    
+
     # Check if item already in cart
-    existing_item = None
-    if variant:
-        existing_item = CartItem.query.filter_by(
-            cart_id=cart.id,
-            product_id=data['product_id'],
-            variant_id=data['variant_id']
-        ).first()
-    else:
-        existing_item = CartItem.query.filter_by(
-            cart_id=cart.id,
-            product_id=data['product_id']
-        ).first()
-    
+    existing_item = CartItem.query.filter_by(
+        cart_id=cart.id,
+        product_id=data['product_id'],
+        variant_id=data.get('variant_id')
+    ).first()
+
     if existing_item:
         existing_item.quantity += data.get('quantity', 1)
     else:
         new_item = CartItem(
+            user_id=current_user,
             cart_id=cart.id,
             product_id=data['product_id'],
             variant_id=data.get('variant_id'),
             quantity=data.get('quantity', 1)
         )
         db.session.add(new_item)
-    
+
     db.session.commit()
     return jsonify({'message': 'Item added to cart'}), 200
+
 
 @cart_bp.route('/cart/items/<int:item_id>', methods=['PUT'])
 @jwt_required()
