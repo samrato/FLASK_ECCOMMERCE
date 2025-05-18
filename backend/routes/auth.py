@@ -96,4 +96,4 @@ def reset_password():
         db.session.commit()
         return jsonify({'message': 'Password updated successfully'}), 200
     except Exception as e:
-        return
+        return jsonify ({"Message":"Internal server error","Details":str(e)})
