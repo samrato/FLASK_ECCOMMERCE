@@ -81,17 +81,19 @@ def forgot_password():
         return jsonify({"message":"Internal server error","details":str(e)})
 @auth_bp.route('/reset-password', methods=['POST'])
 def reset_password():
-    token = request.json.get('token')
-    password = request.json.get('password')
-    is_valid, error = validate_password(password)
-    if not is_valid:
-        return jsonify({'message': error}), 400
+    try:
+        token = request.json.get('token')
+        password = request.json.get('password')
+        is_valid, error = validate_password(password)
+        if not is_valid:
+            return jsonify({'message': error}), 400
     
-    user = AuthService.verify_reset_token(token)
-    if not user:
-        return jsonify({'message': 'Invalid or expired token'}), 400
+        user = AuthService.verify_reset_token(token)
+        if not user:
+              return jsonify({'message': 'Invalid or expired token'}), 400
     
-    user.set_password(password)
-    db.session.commit()
-    
-    return jsonify({'message': 'Password updated successfully'}), 200
+        user.set_password(password)
+        db.session.commit()
+        return jsonify({'message': 'Password updated successfully'}), 200
+    except Exception as e:
+        return
