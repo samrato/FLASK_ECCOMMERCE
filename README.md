@@ -3,7 +3,7 @@
 A full-featured RESTful E-commerce API built with Flask, SQLAlchemy, JWT authentication, Cloudinary image uploads, Stripe payments, and more.
 
 ---
-![Demo Image](images/demo.png)
+![Demo Image of STRIPE ](backend/files/stripe.jpg)
 
 
 ## 🚀 Features
