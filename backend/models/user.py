@@ -29,22 +29,25 @@ class User(db.Model):
     orders = db.relationship(Order, backref='customer', lazy=True)
     reviews = db.relationship(Review, backref='user', lazy=True)
     cart_items = db.relationship(CartItem, backref='user', lazy=True)
-    
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
-    
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
+
     def generate_auth_tokens(self):
-       #in accssing or making the token make sure its converte to string then on access u convert it back to interger to avoid error of crypo padding
-        access_token = create_access_token(identity=str(self.id))
+        # Embed role claims in JWT
+        additional_claims = {
+            "is_admin": self.is_admin,
+            "is_seller": self.is_seller
+        }
+        access_token = create_access_token(identity=str(self.id), additional_claims=additional_claims)
         refresh_token = create_refresh_token(identity=str(self.id))
         return access_token, refresh_token
-    
+
     def __repr__(self):
         return f'<User {self.username}>'
-
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
