@@ -43,17 +43,19 @@ def register():
           return jsonify({"Message":"Internal server error ","details":str(e)})
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    user = User.query.filter_by(email=data.get('email')).first()
-    if not user or not user.check_password(data.get('password')):
-        return jsonify({'message': 'Invalid email or password'}), 401
-    
-    access_token, refresh_token = user.generate_auth_tokens()
-    return jsonify({
-        'access_token': access_token,
-        'refresh_token': refresh_token,
-        'user': user_schema.dump(user)
-    }), 200
+    try:
+        data = request.get_json()
+        user = User.query.filter_by(email=data.get('email')).first()
+        if not user or not user.check_password(data.get('password')):
+            return jsonify({'message': 'Invalid email or password'}), 401
+        access_token, refresh_token = user.generate_auth_tokens()
+        return jsonify({
+          'access_token': access_token,
+           'refresh_token': refresh_token,
+           'user': user_schema.dump(user)
+           }), 200
+    except Exception as e:
+        return jsonify ({"Message ":"Internal server Error "})
 
 @auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
